@@ -1,0 +1,4 @@
+flask_blog/venv
+flask_blog/venv/*
+*.swp
+*.pyc
