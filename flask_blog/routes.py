@@ -1,15 +1,16 @@
 #!/usr/bin/python
 #-*- coding:utf-8 -*-
 from flask import Flask, render_template, request, redirect, url_for
+from config import (
+        MAIL_SERVER,
+        MAIL_PORT,
+        MAIL_USE_TLS,
+        MAIL_USE_SSL,
+        MAIL_USERNAME,
+        MAIL_PASSWORD
+        )
 
 app = Flask(__name__)
-# email server
-MAIL_SERVER = 'smtp.googlemail.com'
-MAIL_PORT = 465
-MAIL_USE_TLS = False
-MAIL_USE_SSL = True
-MAIL_USERNAME = 'help.sisobus@gmail.com'
-MAIL_PASSWORD = 'tjrkdeoghkdlxld'
 
 app.config["MAIL_SERVER"] = MAIL_SERVER
 app.config["MAIL_PORT"] = MAIL_PORT
