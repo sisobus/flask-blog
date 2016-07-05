@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <title>
         Flask blog
     </title>
@@ -20,6 +20,7 @@
             width: 400px;
             height: 100%;
             background: #123456;
+            overflow-y: scroll;
         }
         #rightside {
             position: absolute;
@@ -35,6 +36,7 @@
 </head>
 <body>
 <div id="leftside">
+    <div class="container">
     <h2 style="color: white;">
         <a href="/create_post" style="color: white;">
             글 작성하기
@@ -47,6 +49,7 @@
     </a>
     </h2>
     {% endfor%}
+</div>
 </div>
 <div id="rightside">
 {% block content %}

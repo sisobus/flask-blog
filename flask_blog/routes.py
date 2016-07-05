@@ -58,17 +58,9 @@ def contact_mail():
                     u'반갑습니다. html입니다. %s님이 쓰신 %s는 잘 읽었습니다. 다만 들어줄 수 없습니다 .'%(name,comments))
         return redirect(url_for('test_2016_06_30'))
 
-@app.route('/')
-def main():
-    posts = get_all_posts()
-    ret_posts = get_all_post_information(posts)
-    return render_template('blog.html',ret_posts=ret_posts)
-
-@app.route('/create_post')
-def create_post():
-    posts = get_all_posts()
-    ret_posts = get_all_post_information(posts)
-    return render_template('create_post.html',ret_posts=ret_posts)
+"""
+: blog util function
+"""
 
 def createDirectory(directoryName):
     if not os.path.exists(directoryName):
@@ -76,6 +68,7 @@ def createDirectory(directoryName):
         ret = commands.getoutput(command)
         command = 'chmod 777 %s'%directoryName
         ret = commands.getoutput(command)
+
 
 def get_max_post_number(filenames):
     ret = 0
@@ -105,6 +98,22 @@ def get_all_post_information(post_names):
             d['post_body'] += body
         ret.append(d)
     return ret
+
+"""
+: blog route
+"""
+@app.route('/')
+def main():
+    posts = get_all_posts()
+    ret_posts = get_all_post_information(posts)
+    return render_template('blog.html',ret_posts=ret_posts)
+
+@app.route('/create_post')
+def create_post():
+    posts = get_all_posts()
+    ret_posts = get_all_post_information(posts)
+    return render_template('create_post.html',ret_posts=ret_posts)
+
 
 @app.route('/save_post',methods=['POST'])
 def save_post():
