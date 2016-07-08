@@ -2,10 +2,17 @@
 {% block content %}
 <div class="container" style="width:inherit;">
 <h1>
-    {{ post.post_name }}
-    {{ post.post_author }}
-    {{ post.post_date }}
-    {{ post.post_body }}
+    {{ post.post_name }}<br>
 </h1>
+<h2>
+    {{ post.post_author }}<br>
+    {{ post.post_date }}<br>
+    {{ post.post_body }}<br>
+</h2>
+<p>
+{% for tag in post.post_tags %}
+    #{{tag}}
+{% endfor %}
+</p>
 </div>
 {% endblock %}

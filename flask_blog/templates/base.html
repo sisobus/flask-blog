@@ -21,6 +21,7 @@
             height: 100%;
             background: #123456;
             overflow-y: scroll;
+            overflow-x: hidden;
         }
         #rightside {
             position: absolute;
@@ -43,11 +44,11 @@
         </a>
     </h2>
     {% for post in ret_posts %}
-    <h2 style="color: white;">
+    <h3 style="color: white;">
         <a href="/post/{{post.post_id}}" style="color: white;">
-        {{ post.post_name }}
-    </a>
-    </h2>
+            {{ post.post_name }}
+        </a>
+    </h3>
     {% endfor%}
 </div>
 </div>

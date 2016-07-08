@@ -83,20 +83,40 @@ def get_all_posts():
     filenames = glob.glob('/var/www/flask_blog/flask_blog/post/*.post')
     return filenames
 
+def get_all_tags():
+    with open('/var/www/flask_blog/flask_blog/post/tag','r') as fp:
+        lines = fp.read().strip().split('\n')
+    d = {}
+    for line in lines:
+        tag = line.split()[0]
+        post_id = str(line.split()[1])
+        if post_id in d:
+            d[post_id].append(tag)
+        else :
+            d[post_id] = [tag]
+    return d
+
 def get_all_post_information(post_names):
+    tags = get_all_tags()
     ret = []
     for post_name in post_names:
         d = {}
         with open(post_name,'r') as fp:
             lines = fp.read().strip().split('\n')
-        d['post_id'] = post_name.split('/')[-1].split('.')[0]
+        post_id = post_name.split('/')[-1].split('.')[0]
+        d['post_id'] = post_id
         d['post_name'] = lines[0]
         d['post_author'] = lines[1]
         d['post_date'] = lines[2]
         d['post_body'] = ''
         for body in lines[3:]:
-            d['post_body'] += body
+            d['post_body'] += body+'\n'
+        if post_id in tags:
+            d['post_tags'] = tags[post_id]
+        else:
+            d['post_tags'] = []
         ret.append(d)
+    ret = sorted(ret, key=lambda k: int(k['post_id']), reverse=True)
     return ret
 
 """
@@ -126,9 +146,19 @@ def save_post():
         print post_name, post_author, post_body, post_date
         post_names = get_all_posts()
         last_post_number = get_max_post_number(post_names)
-        next_filename = '/var/www/flask_blog/flask_blog/post/%d.post'%(last_post_number+1)
+        post_id = last_post_number+1
+        next_filename = '/var/www/flask_blog/flask_blog/post/%d.post'%(post_id)
         with open(next_filename,'w') as fp:
             fp.write(s)
+        post_tags = request.form['tags'].split('#')
+        if not os.path.exists('/var/www/flask_blog/flask_blog/post/tag'):
+            commands.getoutput('touch /var/www/flask_blog/flask_blog/post/tag')
+        with open('/var/www/flask_blog/flask_blog/post/tag','a') as fp:
+            for post_tag in post_tags:
+                cur_tag = post_tag.strip()
+                if len(cur_tag) == 0:
+                    continue
+                fp.write(cur_tag+' '+str(post_id)+'\n')
         return redirect(url_for('main'))
 
 @app.route('/post/<post_id>')
