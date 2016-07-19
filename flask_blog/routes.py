@@ -217,6 +217,8 @@ def get_all_post_information(post_names):
             d['post_comments'] = comments[post_id]
         else:
             d['post_comments'] = []
+        if 'logged_in' in session:
+            d['post_liked'] = get_aleady_like(session['user_id'],post_id)
 
         ret.append(d)
     ret = sorted(ret, key=lambda k: int(k['post_id']), reverse=True)
@@ -372,10 +374,10 @@ def user_like_post(post_id):
                 if str(user_id) == str(like['user_id']) and str(post_id) == str(like['post_id']):
                     continue
                 fp.write('%s %s\n'%(str(like['user_id']),str(like['post_id'])))
-        return json.dumps({'status':'OK','message':u'remove'})
+        return json.dumps({'status':'OK','message':u'remove','is_liked':False})
     with open('/var/www/flask_blog/flask_blog/post/like','a') as fp:
         fp.write('%s %s\n'%(str(user_id),str(post_id)))
-    return json.dumps({'status':'OK','message':u'success'})
+    return json.dumps({'status':'OK','message':u'success','is_liked':True})
 
 
 if __name__ == '__main__':

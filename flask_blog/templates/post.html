@@ -15,7 +15,11 @@
 {% endfor %}
 </p>
 {% if 'logged_in' in session %}
-<i class="fa fa-heart" aria-hidden="true" id="like-button"></i>
+{% if post.post_liked %}
+<i class="fa fa-heart" aria-hidden="true" id="like-button" style="color:#eb7b7b"></i>
+{% else %}
+<i class="fa fa-heart" aria-hidden="true" id="like-button" style="color:#777777"></i>
+{% endif %}
 <form action="/{{post.post_id}}/save_comment" method='POST'>
     <div class="form-group">
         <label>
@@ -44,22 +48,13 @@ url: '/user_like_post/{{post.post_id}}',
         type: 'POST',
         success: function(response) {
             var jsonData = JSON.parse(response);
-            alert(jsonData['message']);
-            /*
             if ( jsonData["is_liked"] ) {
-                $('#like-button-'+feed_id).css('color','#777777');
-                $('#like-button-'+feed_id).css('font-weight','400');
-                $('#like-button-'+feed_id).text('좋아요 '+jsonData['number_of_like']);
-                $('#like-button-icon-circle-'+feed_id).css('color','#777777');
-                $('#like-button-icon-thumb-'+feed_id).css('color','#777777');
+                $('#like-button').css('color','#eb7b7b');
+                $('#like-button').css('font-weight','400');
             } else {
-                $('#like-button-'+feed_id).css('color','#eb7b7b');
-                $('#like-button-'+feed_id).css('font-weight','600');
-                $('#like-button-'+feed_id).text('좋아요 '+jsonData['number_of_like']);
-                $('#like-button-icon-circle-'+feed_id).css('color','#eb7b7b');
-                $('#like-button-icon-thumb-'+feed_id).css('color','#eb7b7b');
+                $('#like-button').css('color','#777777');
+                $('#like-button').css('font-weight','600');
             }
-            */
         },
         error: function(error) {
             console.log(error);
