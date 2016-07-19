@@ -6,6 +6,7 @@
         Flask blog
     </title>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/font-awesome.min.css') }}" type="text/css">
     <script src="{{ url_for('static',filename='js/jquery-1.11.0.min.js') }}"></script>
     <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
 
@@ -38,11 +39,17 @@
 <body>
 <div id="leftside">
     <div class="container">
-    <h2 style="color: white;">
-        <a href="/create_post" style="color: white;">
-            글 작성하기
-        </a>
-    </h2>
+        <h3>
+            <a href="/create_post" style="color: white;">
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+            </a>
+            <a href="/login" style="color: white;">
+                <i class="fa fa-sign-in" aria-hidden="true"></i>
+            </a>
+            <a href="/logout" style="color: white;">
+                <i class="fa fa-sign-out" aria-hidden="true"></i>
+            </a>
+        </h3>
     {% for post in ret_posts %}
     <h3 style="color: white;">
         <a href="/post/{{post.post_id}}" style="color: white;">
@@ -52,7 +59,7 @@
     {% endfor%}
 </div>
 </div>
-<div id="rightside">
+<div id="rightside" style="padding-top: 20px;">
 {% block content %}
 {% endblock %}
 </div>

@@ -1,6 +1,13 @@
 #!/usr/bin/python
 #-*- coding:utf-8 -*-
-from flask import Flask, render_template, request, redirect, url_for
+from flask import (
+        Flask, 
+        render_template, 
+        request, 
+        redirect, 
+        url_for, 
+        session
+        )
 from config import (
         MAIL_SERVER,
         MAIL_PORT,
@@ -11,7 +18,7 @@ from config import (
         )
 
 app = Flask(__name__)
-
+app.config["SECRET_KEY"] = 'SET T0 4NY SECRET KEY L1KE RAND0M H4SH'
 app.config["MAIL_SERVER"] = MAIL_SERVER
 app.config["MAIL_PORT"] = MAIL_PORT
 app.config["MAIL_USE_TLS"] = False
@@ -23,6 +30,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+from werkzeug import generate_password_hash, check_password_hash
 from flask.ext.mail import Mail
 mail = Mail(app)
 from flask.ext.mail import Message
@@ -31,6 +39,7 @@ import datetime
 import os
 import commands
 import glob
+import json
 
 @async
 def send_async_email(app, msg):
@@ -65,6 +74,11 @@ def contact_mail():
 """
 : blog util function
 """
+def set_password(password):
+    return generate_password_hash(password)
+
+def check_password(password, cur_password):
+    return check_password_hash(password, cur_password)
 
 def createDirectory(directoryName):
     if not os.path.exists(directoryName):
@@ -100,6 +114,29 @@ def get_all_tags():
             d[post_id] = [tag]
     return d
 
+def get_all_like():
+    with open('/var/www/flask_blog/flask_blog/post/like','r') as fp:
+        lines = fp.read().strip().split('\n')
+    l = []
+    for line in lines:
+        if len(line) == 0 :
+            continue
+        cur = line.split()
+        user_id = cur[0].strip()
+        post_id = cur[1].strip()
+        l.append({
+            'user_id': user_id,
+            'post_id': post_id
+            })
+    return l
+
+def get_aleady_like(user_id,post_id):
+    likes = get_all_like()
+    for like in likes:
+        if str(user_id) == str(like['user_id']) and str(post_id) == str(like['post_id']):
+            return True
+    return False
+
 def get_all_comments():
     users = get_all_users()
     with open('/var/www/flask_blog/flask_blog/post/comment','r') as fp:
@@ -113,7 +150,7 @@ def get_all_comments():
         user_id = l[1].strip()
         post_id = l[2].strip()
         created_at = l[3].strip()
-        user_name = users[user_id]
+        user_name = users[user_id]['username']
         if post_id in d:
             d[post_id].append({
                 'comment_body': comment_body,
@@ -137,11 +174,19 @@ def get_all_users():
         lines = fp.read().strip().split('\n')
     d = {}
     for line in lines:
+        if len(line) == 0:
+            continue
         l = line.split()
         user_id = l[0].strip()
         user_name = l[1].strip()
-        d[user_id] = user_name
-
+        user_password = l[2].strip()
+        user_created_at = l[3].strip()
+        d[user_id] = {
+                'user_id': user_id,
+                'username': user_name,
+                'password': user_password,
+                'created_at': user_created_at
+                }
     return d
 
 
@@ -184,12 +229,17 @@ def get_all_post_information(post_names):
 def main():
     posts = get_all_posts()
     ret_posts = get_all_post_information(posts)
+    if not 'logged_in' in session:
+        return render_template('signup.html',ret_posts=ret_posts)
+
     return render_template('blog.html',ret_posts=ret_posts)
 
 @app.route('/create_post')
 def create_post():
     posts = get_all_posts()
     ret_posts = get_all_post_information(posts)
+    if not 'logged_in' in session:
+        return render_template('signup.html',ret_posts=ret_posts)
     return render_template('create_post.html',ret_posts=ret_posts)
 
 
@@ -225,7 +275,7 @@ def save_comment(post_id):
         comment_body = request.form['comment_body']
         if len(comment_body.strip()) == 0:
             return redirect('/post/%s'%post_id)
-        user_id = 1
+        user_id = session['user_id']
         created_at = datetime.datetime.now()
         s = '%s %d %d %s\n'%(comment_body, user_id, int(post_id), str(created_at).split()[0])
         
@@ -235,18 +285,97 @@ def save_comment(post_id):
             fp.write(s)
         return redirect('/post/%s'%post_id)
 
+def get_user_with_id(user_id):
+    users = get_all_users()
+    if not user_id in users:
+        return {}
+    return users[user_id]
 
+def get_user_with_username(username):
+    users = get_all_users()
+    for key in users:
+        user = users[key]
+        if user['username'] == username:
+            return user
+    return {}
 
+@app.route('/save_user',methods=['POST'])
+def save_user():
+    users = get_all_users()
+    if request.method == 'POST':
+        next_user_id = len(users) + 1
+        username = request.form['username']
+        password = request.form['password']
+        input_password = password
+        password = set_password(password)
+        found_user = get_user_with_username(username)
+        if len(found_user) != 0:
+            ans_password = found_user['password']
+            if check_password_hash(ans_password, input_password):
+                session['logged_in'] = True
+                session['user_id'] = str(next_user_id)
+                session['username'] = username
+                return redirect('/')
+            else :
+                posts = get_all_posts()
+                ret_posts = get_all_post_information(posts)
+                return render_template('/signup.html',ret_posts=ret_posts,error_message=u'비밀번호가 틀리셨어요!')
+
+        created_at = datetime.datetime.now()
+        s = '%d %s %s %s\n'%(next_user_id,username,password,str(created_at))
+        base_path = '/var/www/flask_blog/flask_blog/post/'
+        user_path = base_path + 'user'
+        with open(user_path,'a') as fp:
+            fp.write(s)
+        session['logged_in'] = True
+        session['user_id'] = str(next_user_id)
+        session['username'] = username
+        return redirect('/')
+
+@app.route('/login')
+def login():
+    posts = get_all_posts()
+    ret_posts = get_all_post_information(posts)
+    return render_template('/signup.html',ret_posts=ret_posts)
+
+@app.route('/logout')
+def logout():
+    if 'logged_in' not in session:
+        return redirect('/')
+    session.pop('username', None)
+    session.pop('logged_in', None)
+    session.pop('user_id', None)
+    return redirect('/')
 
 @app.route('/post/<post_id>')
 def post_detail(post_id):
     posts = get_all_posts()
     ret_posts = get_all_post_information(posts)
+    if not 'logged_in' in session:
+        return render_template('signup.html',ret_posts=ret_posts)
     ret = {}
     for post in ret_posts:
         if post['post_id'].strip() == post_id.strip():
             ret = post
     return render_template('post.html',ret_posts=ret_posts,post=ret)
+
+
+@app.route('/user_like_post/<post_id>',methods=['POST'])
+def user_like_post(post_id):
+    if not 'user_id' in session:
+        return json.dumps({'status':'error','message':u'user_id not exists'})
+    user_id = session['user_id']
+    likes = get_all_like()
+    if get_aleady_like(str(user_id),str(post_id)):
+        with open('/var/www/flask_blog/flask_blog/post/like','w') as fp:
+            for like in likes:
+                if str(user_id) == str(like['user_id']) and str(post_id) == str(like['post_id']):
+                    continue
+                fp.write('%s %s\n'%(str(like['user_id']),str(like['post_id'])))
+        return json.dumps({'status':'OK','message':u'remove'})
+    with open('/var/www/flask_blog/flask_blog/post/like','a') as fp:
+        fp.write('%s %s\n'%(str(user_id),str(post_id)))
+    return json.dumps({'status':'OK','message':u'success'})
 
 
 if __name__ == '__main__':
