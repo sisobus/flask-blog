@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+    .inline-block-font-size {
+        display:inline-block;
+        font-size:20px;
+    }
+</style>
 <div class="container" style="padding-right:305px;">
 <h1>
     {{ post.post_name }}<br>
@@ -7,25 +13,30 @@
 <h2>
     {{ post.post_author }}<br>
     {{ post.post_date }}<br>
-    {{ post.post_body }}<br>
+    {{ post.post_body | safe }}<br>
 </h2>
 <p>
 {% for tag in post.post_tags %}
     #{{tag}}
 {% endfor %}
 </p>
+
 {% if 'logged_in' in session %}
 {% if post.post_liked %}
-<i class="fa fa-heart" aria-hidden="true" id="like-button" style="color:#eb7b7b"></i>
+<i class="fa fa-heart inline-block-font-size" aria-hidden="true" id="like-button" style="color:#eb7b7b;"></i>
 {% else %}
-<i class="fa fa-heart" aria-hidden="true" id="like-button" style="color:#777777"></i>
+<i class="fa fa-heart inline-block-font-size" aria-hidden="true" id="like-button" style="color:#777777;"></i>
 {% endif %}
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<span style="display:inline-block;">
+<div class="addthis_sharing_toolbox"></div>
+</span>
 <form action="/{{post.post_id}}/save_comment" method='POST'>
     <div class="form-group">
         <label>
             댓글 작성하기
         </label>
-        <input class="form-control" type="text" id="comment_body" name="comment_body" placeholder="당신의 이야기를 들려주세요" autofocus="true">
+        <input class="form-control" type="text" id="comment_body" name="comment_body" placeholder="당신의 이야기를 들려주세요" >
     </div>
     <button class="btn btn-primary">
         저장하기

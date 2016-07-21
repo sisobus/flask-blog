@@ -1,20 +1,27 @@
 <!doctype html>
 <html>
 <head>
-    <meta charset="UTF-8">
     <title>
         Flask blog
     </title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" rel="stylesheet" type="text/css">
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ url_for('static',filename='css/font-awesome.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/summernote.css') }}" type="text/css">
     <script src="{{ url_for('static',filename='js/jquery-1.11.0.min.js') }}"></script>
     <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
 
     <style>
+        @import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+        html {
+            font-family: "Nanum Gothic", sans-serif;
+        }
         body {
             overflow: hidden;
             margin : 0;
             padding : 0 ;
+            font-family: "Nanum Gothic", sans-serif;
         }
         #leftside {
             position: absolute;
@@ -38,17 +45,25 @@
 </head>
 <body>
 <div id="leftside">
-    <div class="container">
+    <div class="container" style="width:initial;">
         <h3>
+            <a href="/" style="color: white;">
+                <i class="fa fa-home" aria-hidden="true"></i>
+            </a>
             <a href="/create_post" style="color: white;">
                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
             </a>
-            <a href="/login" style="color: white;">
-                <i class="fa fa-sign-in" aria-hidden="true"></i>
-            </a>
-            <a href="/logout" style="color: white;">
-                <i class="fa fa-sign-out" aria-hidden="true"></i>
-            </a>
+            <span class="pull-right">
+                {% if not 'logged_in' in session %}
+                <a href="/login" style="color: white;">
+                    <i class="fa fa-sign-in" aria-hidden="true"></i>
+                </a>
+                {% else %}
+                <a href="/logout" style="color: white;">
+                    <i class="fa fa-sign-out" aria-hidden="true"></i>
+                </a>
+                {% endif %}
+            </span>
         </h3>
     {% for post in ret_posts %}
     <h3 style="color: white;">
@@ -59,10 +74,13 @@
     {% endfor%}
 </div>
 </div>
-<div id="rightside" style="padding-top: 20px;">
+<div id="rightside" style="padding-top: 20px;padding-bottom: 20px;">
 {% block content %}
 {% endblock %}
 </div>
 
+    <script src="{{ url_for('static',filename='js/summernote.min.js') }}"></script>
+    <!-- Go to www.addthis.com/dashboard to customize your tools -->
+    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-525695643e822dae"></script>
 </body>
 </html>

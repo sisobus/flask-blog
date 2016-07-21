@@ -106,6 +106,8 @@ def get_all_tags():
         lines = fp.read().strip().split('\n')
     d = {}
     for line in lines:
+        if len(line) == 0:
+            continue
         tag = line.split()[0]
         post_id = str(line.split()[1])
         if post_id in d:
@@ -279,7 +281,7 @@ def save_comment(post_id):
             return redirect('/post/%s'%post_id)
         user_id = session['user_id']
         created_at = datetime.datetime.now()
-        s = '%s %d %d %s\n'%(comment_body, user_id, int(post_id), str(created_at).split()[0])
+        s = '%s %d %d %s\n'%(comment_body, int(user_id), int(post_id), str(created_at).split()[0])
         
         base_path = '/var/www/flask_blog/flask_blog/post/'
         comment_path = base_path + 'comment'
@@ -315,7 +317,7 @@ def save_user():
             ans_password = found_user['password']
             if check_password_hash(ans_password, input_password):
                 session['logged_in'] = True
-                session['user_id'] = str(next_user_id)
+                session['user_id'] = found_user['user_id']
                 session['username'] = username
                 return redirect('/')
             else :

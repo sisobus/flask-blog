@@ -22,8 +22,11 @@ title, body, author, date
             <label>
                 포스트 내용
             </label>
+            <textarea id="summernote" name="post_body"></textarea>
+            <!--
             <textarea class="form-control" type="text" id="post_body" name="post_body" >
             </textarea>
+            -->
         </div>
         <div class="form-group">
             <label>
@@ -34,4 +37,11 @@ title, body, author, date
         <button class="btn btn-primary">저장하기</button>
     </form>
 </div>
+<script>
+$(document).ready(function() {
+    $('#summernote').summernote({
+        height: 300
+    });
+});
+</script>
 {% endblock %}
