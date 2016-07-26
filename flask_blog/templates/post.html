@@ -6,9 +6,15 @@
         font-size:20px;
     }
 </style>
+{% include "delete-modal.html" %}
 <div class="container" style="padding-right:305px;">
 <h1>
-    {{ post.post_name }}<br>
+    {{ post.post_name }}
+    {% if 'logged_in' in session and session['user_id'] == '1' %}
+        <button class="btn btn-warning">글 수정</button>
+        <button type="button" data-toggle="modal" data-target="#delete-modal" class="btn btn-danger">글 삭제</button>
+    {% endif %}
+    <br>
 </h1>
 <h2>
     {{ post.post_author }}<br>
@@ -17,7 +23,7 @@
 </h2>
 <p>
 {% for tag in post.post_tags %}
-    #{{tag}}
+#<a href="/tag_search/{{tag}}">{{tag}}</a>
 {% endfor %}
 </p>
 
@@ -49,6 +55,18 @@
 {% endfor %}
 </div>
 <script type="text/javascript">
+$('#delete-button').click(function() {
+    $.ajax({
+        url: '/delete_post/{{post.post_id}}',
+        type: 'POST',
+        success: function(response) {
+            window.location.href='/';
+        }, 
+        error: function(error) {
+            console.log(error);
+        }
+    });
+});
 $('#like-button').click(function() {
     var data = {
     "user_id": {{ session['user_id'] }},

@@ -65,6 +65,7 @@
                 {% endif %}
             </span>
         </h3>
+        <input type="text" id="search-input" name="search-input" style="width: 100%;">
     {% for post in ret_posts %}
     <h3 style="color: white;">
         <a href="/post/{{post.post_id}}" style="color: white;">
@@ -83,4 +84,14 @@
     <!-- Go to www.addthis.com/dashboard to customize your tools -->
     <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-525695643e822dae"></script>
 </body>
+<script>
+$(document).ready(function() {
+    $('#search-input').keyup(function(e) {
+        if ( e.keyCode == 13 ) {
+            var val = $(this).val();
+            window.location.href = '/search?q='+val;
+        }
+    });
+});
+</script>
 </html>

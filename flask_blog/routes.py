@@ -41,6 +41,8 @@ import commands
 import glob
 import json
 
+base_path = '/var/www/flask_blog/flask_blog/post/'
+
 @async
 def send_async_email(app, msg):
     with app.app_context():
@@ -380,6 +382,66 @@ def user_like_post(post_id):
     with open('/var/www/flask_blog/flask_blog/post/like','a') as fp:
         fp.write('%s %s\n'%(str(user_id),str(post_id)))
     return json.dumps({'status':'OK','message':u'success','is_liked':True})
+
+@app.route('/tag_search/<tag_name>',methods=['GET','POST'])
+def tag_search(tag_name):
+    posts = get_all_posts()
+    ret_posts = get_all_post_information(posts)
+    if not 'logged_in' in session:
+        return render_template('signup.html',ret_posts=ret_posts)
+
+    tags = get_all_tags()
+    found_post_filenames = []
+    for key in tags:
+        cur_tag_names = tags[key]
+        for cur_tag_name in cur_tag_names:
+            if cur_tag_name.strip() == tag_name.strip():
+                cur_post_id = key
+                found_post_filenames.append(base_path+str(cur_post_id)+'.post')
+    found_posts = get_all_post_information(found_post_filenames)
+    print found_posts
+    
+    return render_template('search.html',ret_posts=ret_posts,found_posts=found_posts)
+
+@app.route('/search')
+def search():
+    posts = get_all_posts()
+    ret_posts = get_all_post_information(posts)
+    found_posts = []
+    if not 'logged_in' in session:
+        return render_template('signup.html',ret_posts=ret_posts)
+    if not request.args.get('q'):
+        return render_template('search.html',ret_posts=ret_posts,found_posts=found_posts)
+
+    q = request.args.get('q').strip()
+    tags = get_all_tags()
+    for post in ret_posts:
+        ok = False
+        if post['post_name'].strip().find(q) != -1:
+            ok = True
+        if post['post_author'].strip().find(q) != -1:
+            ok = True
+        if post['post_body'].strip().find(q) != -1:
+            ok = True
+        cur_tags = tags[post['post_id']]
+        for cur_tag in cur_tags:
+            if cur_tag.strip().find(q) != -1:
+                ok = True
+        if ok:
+            found_posts.append(post)
+    return render_template('search.html',ret_posts=ret_posts,found_posts=found_posts)
+
+
+@app.route('/delete_post/<post_id>',methods=['POST'])
+def delete_post(post_id):
+    if request.method == 'GET':
+        return redirect('/')
+    if not 'logged_in' in session:
+        return redirect('/')
+#    post_path = base_path + str(post_id) + '.post'
+#    commands.getoutput('rm '+post_path)
+    return redirect('/')
+
 
 
 if __name__ == '__main__':
