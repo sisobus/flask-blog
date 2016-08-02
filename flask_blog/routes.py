@@ -228,6 +228,16 @@ def get_all_post_information(post_names):
     ret = sorted(ret, key=lambda k: int(k['post_id']), reverse=True)
     return ret
 
+def get_post_with_post_id(post_id):
+    posts = get_all_posts()
+    ret_posts = get_all_post_information(posts)
+
+    for post in ret_posts:
+        cur_post_id = post['post_id']
+        if cur_post_id.strip() == post_id.strip():
+            return post
+    return None
+
 """
 : blog route
 """
@@ -274,6 +284,33 @@ def save_post():
                     continue
                 fp.write(cur_tag+' '+str(post_id)+'\n')
         return redirect(url_for('main'))
+
+@app.route('/save_edit_post/<post_id>',methods=['POST'])
+def save_edit_post(post_id):
+    post_id = str(post_id).strip()
+    if request.method == 'POST':
+        post_name = request.form['post_name']
+        post_author = request.form['post_author']
+        post_body = request.form['post_body']
+        post_date = datetime.datetime.now()
+        s = '%s\n%s\n%s\n%s'%(post_name,post_author,str(post_date),post_body)
+        cur_post_path = '/var/www/flask_blog/flask_blog/post/%s.post'%(post_id)
+        delete_tag_with_post_id(post_id)
+        with open(cur_post_path,'w') as fp:
+            fp.write(s)
+        post_tags = request.form['tags'].split('#')
+        if not os.path.exists('/var/www/flask_blog/flask_blog/post/tag'):
+            commands.getoutput('touch /var/www/flask_blog/flask_blog/post/tag')
+        with open('/var/www/flask_blog/flask_blog/post/tag','a') as fp:
+            for post_tag in post_tags:
+                cur_tag = post_tag.strip()
+                if len(cur_tag) == 0:
+                    continue
+                fp.write(cur_tag+' '+str(post_id)+'\n')
+        return redirect(url_for('main'))
+
+
+
 
 @app.route('/<post_id>/save_comment',methods=['POST'])
 def save_comment(post_id):
@@ -337,6 +374,78 @@ def save_user():
         session['user_id'] = str(next_user_id)
         session['username'] = username
         return redirect('/')
+
+def delete_tag_with_post_id(post_id):
+    tags = get_all_tags()
+
+    base_path = '/var/www/flask_blog/flask_blog/post/'
+    tag_path = base_path + 'tag'
+    with open(tag_path,'w') as fp:
+        for key in tags:
+            if str(key).strip() == str(post_id).strip():
+                continue
+            cur_tags = tags[key]
+            for tag in cur_tags:
+                cur_tag = tag
+                cur_post_id = key
+                s = '%s %s\n'%(cur_tag,cur_post_id)
+                fp.write(s)
+
+def delete_comment_with_post_id(post_id):
+    comments = get_all_comments()
+
+    #cur_post_comments = comments[str(post_id).strip()]
+    #if len(cur_post_comments) == 0:
+    #    return True
+    base_path = '/var/www/flask_blog/flask_blog/post/'
+    comment_path = base_path + 'comment'
+    with open(comment_path,'w') as fp:
+        for key in comments:
+            if str(key).strip() == str(post_id).strip():
+                continue
+            cur_comments = comments[key]
+            for comment in cur_comments:
+                cur_comment_body = comment['comment_body']
+                cur_user_id = comment['user_id']
+                cur_post_id = comment['post_id']
+                cur_created_at = comment['created_at']
+                s = '%s %s %s %s\n'%(cur_comment_body,cur_user_id,cur_post_id,cur_created_at)
+                fp.write(s)
+
+def delete_like_with_post_id(post_id):
+    likes = get_all_like()
+
+    base_path = '/var/www/flask_blog/flask_blog/post/'
+    like_path = base_path + 'like'
+    with open(like_path,'w') as fp:
+        for like in likes:
+            if str(like['post_id']).strip() == str(post_id).strip():
+                continue
+            cur_user_id = like['user_id']
+            cur_post_id = like['post_id']
+            s = '%s %s\n'%(cur_user_id,cur_post_id)
+            fp.write(s)
+
+
+def delete_post_with_post_id(post_id):
+    posts = get_all_posts()
+    ret_posts = get_all_post_information(posts)
+    delete_comment_with_post_id(post_id)
+    delete_tag_with_post_id(post_id)
+    delete_like_with_post_id(post_id)
+    found_post = {}
+    for post in ret_posts:
+        cur_post_id = post['post_id']
+        if str(cur_post_id).strip() == str(post_id).strip():
+            found_post = post
+            break
+    if len(found_post) == 0:
+        return False 
+    base_path = '/var/www/flask_blog/flask_blog/post/'
+    cur_post_path = base_path + found_post['post_id'] + '.post'
+    command = 'rm %s' % cur_post_path
+    commands.getoutput(command)
+    return True
 
 @app.route('/login')
 def login():
@@ -440,7 +549,21 @@ def delete_post(post_id):
         return redirect('/')
 #    post_path = base_path + str(post_id) + '.post'
 #    commands.getoutput('rm '+post_path)
+    res = delete_post_with_post_id(post_id)
+    if not res:
+        print 'error: post_id is not exists'
     return redirect('/')
+
+@app.route('/edit_post/<post_id>')
+def edit_post(post_id):
+    posts = get_all_posts()
+    ret_posts = get_all_post_information(posts)
+
+    cur_post = get_post_with_post_id(post_id)
+    if not cur_post:
+        return redirect('/')
+    return render_template('edit_post.html',ret_posts=ret_posts,cur_post=cur_post)
+    
 
 
 

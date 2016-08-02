@@ -5,22 +5,41 @@
         display:inline-block;
         font-size:20px;
     }
+    .comment-container {
+        padding-top:2px;
+        padding-bottom:2px;
+    }
+    .comment-user-container {
+        display: inline-block;
+        font-weight: bold;
+    }
+    .comment-body-container {
+        display: inline-block;
+        padding-left: 15px;
+    }
+    .comment-date-container {
+        display: inline-block;
+        padding-left: 15px;
+    }
 </style>
 {% include "delete-modal.html" %}
 <div class="container" style="padding-right:305px;">
 <h1>
     {{ post.post_name }}
     {% if 'logged_in' in session and session['user_id'] == '1' %}
-        <button class="btn btn-warning">글 수정</button>
+    <a href="/edit_post/{{post.post_id}}">
+        <button href="" class="btn btn-warning">글 수정</button>
+    </a>
         <button type="button" data-toggle="modal" data-target="#delete-modal" class="btn btn-danger">글 삭제</button>
     {% endif %}
     <br>
 </h1>
-<h2>
-    {{ post.post_author }}<br>
-    {{ post.post_date }}<br>
+<p>
+{{ post.post_author }}<br>
+{{ post.post_date }}<br>
+</p>
+    <br>
     {{ post.post_body | safe }}<br>
-</h2>
 <p>
 {% for tag in post.post_tags %}
 #<a href="/tag_search/{{tag}}">{{tag}}</a>
@@ -44,14 +63,18 @@
         </label>
         <input class="form-control" type="text" id="comment_body" name="comment_body" placeholder="당신의 이야기를 들려주세요" >
     </div>
-    <button class="btn btn-primary">
+    <button class="btn btn-primary pull-right" >
         저장하기
     </button>
 </form>
 {% endif %}
+<div style="padding-top:40px;padding-bottom:30px;">
 {% for comment in post.post_comments %}
-    {{ comment.user_name }} {{ comment.comment_body }} {{ comment.created_at }}
-    <br>
+<div class="comment-container">
+    <div class="comment-user-container">{{ comment.user_name }}</div>
+    <div class="comment-body-container">{{ comment.comment_body }}</div>
+    <div class="comment-date-container pull-right">{{ comment.created_at }}</div>
+</div>
 {% endfor %}
 </div>
 <script type="text/javascript">

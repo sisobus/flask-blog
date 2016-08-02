@@ -5,7 +5,7 @@ blog post attribute
 title, body, author, date
 -->
 <div class="container" style="padding-right:305px;">
-    <form action="/save_post" method="POST">
+    <form action="/save_edit_post/{{cur_post.post_id}}" method="POST">
         <div class="form-group">
             <label>
                 포스트 제목
@@ -22,7 +22,7 @@ title, body, author, date
             <label>
                 포스트 내용
             </label>
-            <textarea id="summernote" name="post_body"></textarea>
+            <textarea id="summernote" name="post_body">{{ cur_post.post_body }}</textarea>
             <!--
             <textarea class="form-control" type="text" id="post_body" name="post_body" >
             </textarea>
@@ -43,17 +43,21 @@ $(document).ready(function() {
         height: 300,
         toolbar: [
             ['style', ['style']],
-            ['font', ['bold', 'underline', 'clear']],
-            ['fontname', ['fontname']],
-            ['fontsize', ['fontsize']],
-            ['height', ['height']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['table', ['table']],
-            ['insert', ['link', 'picture', 'video']],
-            ['view', ['fullscreen', 'codeview', 'help']] 
+        ['font', ['bold', 'underline', 'clear']],
+        ['fontname', ['fontname']],
+        ['fontsize', ['fontsize']],
+        ['height', ['height']],
+        ['color', ['color']],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['table', ['table']],
+        ['insert', ['link', 'picture', 'video']],
+        ['view', ['fullscreen', 'codeview', 'help']] 
         ]
     });
+    $('#post_name').val('{{cur_post.post_name}}');
+    $('#post_author').val('{{cur_post.post_author}}');
+    $('#tags').val('{% for tag in cur_post.post_tags %}#{{tag}} {% endfor %}');
 });
+
 </script>
 {% endblock %}
