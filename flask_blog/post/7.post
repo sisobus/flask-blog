@@ -1,0 +1,4 @@
+2016-07-26 앞으로 할 일
+상근
+2016-07-26 02:43:10.254307
+<ol><li>검색</li><li>CR<b>UD</b></li><li>파일DB를 relational DB화</li><li>FLASK-WTFORM</li><li>FLASK-MYSQL, SQLAlchemy (sql문 쓸 필요 없어, injection 처리)</li></ol>

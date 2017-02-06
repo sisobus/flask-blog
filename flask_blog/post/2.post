@@ -1,0 +1,87 @@
+2016-06-27 박한 스터디
+상근
+2016-07-21 06:18:43.175253
+<div style="font-family:'Helvetica Neue';font-size:14px;">github 에서 저장소 생성
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">터미널에서 git clone 저장소 주소
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">디렉토리 생성됨
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">디렉토리 밑으로 가서
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">README.md 수정
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">touch a
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">aptitude git install
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">git status : 상태를 보고
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">git add . : . 밑의 새로운 파일이나 수정된 파일들을 추가해
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">git commit -m “comment” : commt 달아서 커밋
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">git push origin master : 실제 반영
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">git pull : 최신 저장소의 코드 업데이트
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">라우터
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">- a.html
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">- b.html
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">단점 : 여러개의 파일들을 생성해야 돼 그리고 .html이 붙어
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">디렉토리 만들었어
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">디렉토리/index.html 로 .html 없앴지만 이렇게 매번 만들 수 없어
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">페이지가 많아지면 어떡해 ???
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">flask- router
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">/ &gt; main.html
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">/a &gt; a.html
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">/b &gt; b.html
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">aptitude python-virtualenv install
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">virtualenv : 파이썬 가상 환경설정(venv 디렉토리 밑의 라이브러리를 쓰겠다!!)
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">virtualenv venv
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">. venv/bin/activate : 이 가상환경을 사용하겠다
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">(venv)root@ip-172-31-11-102:/var/www/flask_blog/flask_blog# 이러면 venv/bin 에 있는 걸 쓰는것
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">(venv)root@ip-172-31-11-102:/var/www/flask_blog/flask_blog# pip : python 라이브러리 설치 관리도구&nbsp;
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">(venv)root@ip-172-31-11-102:/var/www/flask_blog/flask_blog# pip install Flask : flask 라이브러리 설치!
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">(venv)root@ip-172-31-11-102:/var/www/flask_blog/flask_blog# pip freeze : 설치된 라이브러리 버전 보기
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">#!/usr/bin/python
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">#-*- coding:utf-8 -*-
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">from flask import Flask, render_template, request &nbsp;# flask 라이브러리 밑에있는 저 세가지를 임포트!!!
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">app = Flask(__name__) # 드디어 플라스크 웹프레임워크를 실행!!
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">@app.route('/‘) &nbsp; # &nbsp;/ 로 들어왔을 때 라우팅
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">def main():
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; return render_template('main.html’) # main.html을 렌더해서 보여주겠다
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">@app.route('/a')
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">def a():
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; return render_template('a.html')
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">@app.route('/b')
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">def b():
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; with open('visit','r') as fp:
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; &nbsp; &nbsp; count = int(fp.read().strip())
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; count += 1
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; with open('visit','w') as fp:
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; &nbsp; &nbsp; fp.write(str(count))
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; return render_template('b.html',count=count)
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">if __name__ == '__main__’: &nbsp; # 내가 python routes.py 를 실행했는가!!
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; app.run(host='172.31.11.102',debug=True) &nbsp;# 얘가 실제로 실행하는 부분
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">(venv)root@ip-172-31-11-102:/var/www/flask_blog/flask_blog# python routes.py&nbsp;
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">:5000 port &nbsp;접속!!
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">- 디플로이
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">deploy
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">flask-blog.wsgi
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">000-default.conf 수정
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">DocumentRoot /var/www/flask_blog
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">RewriteEngine On
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">RewriteOptions Inherit
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">WSGIDaemonProcess ubuntu user=ubuntu group=ubuntu threads=5
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">WSGIScriptAlias / /var/www/flask_blog/flask_blog.wsgi
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&lt;Directory "/var/www/flask_blog/flask_blog"&gt;
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; WSGIProcessGroup flask_blog
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; WSGIApplicationGroup %{GLOBAL}
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; WSGIScriptReloading On
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; Order allow,deny
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; Allow from all
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&lt;/Directory&gt;
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">RewriteEngine - apache library
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">mods-enable/ -&gt; mods-available 에서 링크
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; ln -s ../mods-available/rewrite.load .
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">WSGI
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">&nbsp; &nbsp; aptitude -&gt; libapache-mods-wsgi 설치
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">__init__.py
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">#-*- coding:utf-8 -*-
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">import os
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">import sys
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">reload(sys)
+</div><div style="font-family:'Helvetica Neue';font-size:14px;">sys.setdefaultencoding('utf8')
+</div><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div><div style="font-family:'Helvetica Neue';font-size:14px;">import routes
+</div><p><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
+
+<div style="font-family: &quot;Helvetica Neue&quot;;"></div></p><div style="font-family:'Helvetica Neue';font-size:14px;"><br></div>
