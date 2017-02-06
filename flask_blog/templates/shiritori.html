@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container" style="padding-right:305px;">
+    <form action="/request_word" method="POST">
+        <input id="word" name="word" class="form-control" placeholder="단어를 입력해주세요">
+    </form>
+</div>
+
+{% endblock %}

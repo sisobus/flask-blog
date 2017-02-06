@@ -265,6 +265,8 @@ def save_post():
         post_name = request.form['post_name']
         post_author = request.form['post_author']
         post_body = request.form['post_body']
+        if len(post_name.strip()) == 0 or len(post_author.strip()) == 0 or len(post_body.strip()) == 0:
+            return redirect('/create_post')
         post_date = datetime.datetime.now()
         s = '%s\n%s\n%s\n%s'%(post_name,post_author,str(post_date),post_body)
         print post_name, post_author, post_body, post_date
@@ -564,6 +566,11 @@ def edit_post(post_id):
         return redirect('/')
     return render_template('edit_post.html',ret_posts=ret_posts,cur_post=cur_post)
     
+@app.route('/shiritori')
+def shiritori():
+    posts = get_all_posts()
+    ret_posts = get_all_post_information(posts)
+    return render_template('shiritori.html',ret_posts=ret_posts)
 
 
 
